@@ -9,7 +9,7 @@ def kubectlTest() {
 
 def helmLint(String chart_dir) {
     // lint helm chart
-    sh "/usr/local/bin/helm lint ${chart_dir}"
+    sh "helm lint ${chart_dir}"
 
 }
 
@@ -19,10 +19,10 @@ def helmDeploy(Map args) {
     if (args.dry_run) {
         println "Running dry-run deployment"
 
-        sh "/usr/local/bin/helm upgrade --dry-run --debug --install ${args.name} ${args.chart_dir} --set ImageTag=${args.tag},Replicas=${args.replicas},Cpu=${args.cpu},Memory=${args.memory},DomainName=${args.name} --namespace=${args.name}"
+        sh "helm upgrade --dry-run --debug --install ${args.name} ${args.chart_dir} --set ImageTag=${args.tag},Replicas=${args.replicas},Cpu=${args.cpu},Memory=${args.memory},DomainName=${args.name} --namespace=${args.name}"
     } else {
         println "Running deployment"
-        sh "/usr/local/bin/helm upgrade --install ${args.name} ${args.chart_dir} --set ImageTag=${args.tag},Replicas=${args.replicas},Cpu=${args.cpu},Memory=${args.memory},DomainName=${args.name} --namespace=${args.name}"
+        sh "helm upgrade --install ${args.name} ${args.chart_dir} --set ImageTag=${args.tag},Replicas=${args.replicas},Cpu=${args.cpu},Memory=${args.memory},DomainName=${args.name} --namespace=${args.name}"
 
         echo "Application ${args.name} successfully deployed. Use helm status ${args.name} to check"
     }
@@ -35,14 +35,14 @@ node {
     
     // Setup the Docker Registry (Docker Hub) + Credentials 
     registry_url = "https://index.docker.io/v1/" // Docker Hub
-    docker_creds_id = "judexzhu-DockerHub" // name of the Jenkins Credentials ID
+    docker_creds_id = "docker-hub-credentials" // name of the Jenkins Credentials ID
     build_tag = "1.0" // default tag to push for to the registry
     
     def pwd = pwd()
     def chart_dir = "${pwd}/charts/newegg-nginx"
         
     stage 'Checking out GitHub Repo'
-    git url: 'https://github.com/judexzhu/Jenkins-Pipeline-CI-CD-with-Helm-on-Kubernetes.git'
+    git url: 'https://github.com/sanster23/Jenkins-Pipeline-CI-CD-with-Helm-on-Kubernetes.git'
     
     def inputFile = readFile('config.json')
     def config = new groovy.json.JsonSlurperClassic().parseText(inputFile)
@@ -52,8 +52,8 @@ node {
     docker.withRegistry("${registry_url}", "${docker_creds_id}") {
     
         // Set up the container to build 
-        maintainer_name = "judexzhu"
-        container_name = "nginx-test"
+        maintainer_name = "shekhawatsanjay"
+        container_name = "nginx-test-for-jenkins"
         
 
         stage "Building"
