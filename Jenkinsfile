@@ -48,6 +48,11 @@ node {
     def config = new groovy.json.JsonSlurperClassic().parseText(inputFile)
     println "pipeline config ==> ${config}"
     
+    stage ('kubectl test'){
+        // Test if kubectl is working in jenkins
+        kubectlTest()
+    }
+
     // stage 'Building Nginx Container for Docker Hub'
     // docker.withRegistry("${registry_url}", "${docker_creds_id}") {
     
@@ -158,6 +163,7 @@ node {
     
     stage ('helm test') {
         
+      echo "$(chart_dir)"
     // run helm chart linter
       helmLint(chart_dir)
 
