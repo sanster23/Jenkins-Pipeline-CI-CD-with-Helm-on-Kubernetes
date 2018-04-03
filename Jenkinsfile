@@ -163,7 +163,7 @@ node {
     
     stage ('helm test') {
         
-      echo "$(chart_dir)"
+      echo "${chart_dir}"
     // run helm chart linter
       helmLint(chart_dir)
 
