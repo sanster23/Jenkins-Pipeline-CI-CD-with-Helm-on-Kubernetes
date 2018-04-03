@@ -48,113 +48,113 @@ node {
     def config = new groovy.json.JsonSlurperClassic().parseText(inputFile)
     println "pipeline config ==> ${config}"
     
-    stage 'Building Nginx Container for Docker Hub'
-    docker.withRegistry("${registry_url}", "${docker_creds_id}") {
+    // stage 'Building Nginx Container for Docker Hub'
+    // docker.withRegistry("${registry_url}", "${docker_creds_id}") {
     
-        // Set up the container to build 
-        maintainer_name = "shekhawatsanjay"
-        container_name = "nginx-test-for-jenkins"
+    //     // Set up the container to build 
+    //     maintainer_name = "shekhawatsanjay"
+    //     container_name = "nginx-test-for-jenkins"
         
 
-        stage "Building"
-        echo "Building Nginx with docker.build(${maintainer_name}/${container_name}:${build_tag})"
-        container = docker.build("${maintainer_name}/${container_name}:${build_tag}", '.')
-        // try {
+    //     stage "Building"
+    //     echo "Building Nginx with docker.build(${maintainer_name}/${container_name}:${build_tag})"
+    //     container = docker.build("${maintainer_name}/${container_name}:${build_tag}", '.')
+    //     try {
             
-        //     // Start Testing
-        //     stage "Running Nginx container"
+    //         // Start Testing
+    //         stage "Running Nginx container"
             
-        //     // Run the container with the env file, mounted volumes and the ports:
-        //     docker.image("${maintainer_name}/${container_name}:${build_tag}").withRun("--name=${container_name}  -p 80:80 ")  { c ->
+    //         // Run the container with the env file, mounted volumes and the ports:
+    //         docker.image("${maintainer_name}/${container_name}:${build_tag}").withRun("--name=${container_name}  -p 80:80 ")  { c ->
                    
-        //         // wait for the django server to be ready for testing
-        //         // the 'waitUntil' block needs to return true to stop waiting
-        //         // in the future this will be handy to specify waiting for a max interval: 
-        //         // https://issues.jenkins-ci.org/browse/JENKINS-29037
-        //         //
-        //         waitUntil {
-        //             sh "ss -antup | grep 80 | grep LISTEN | wc -l | tr -d '\n' > /tmp/wait_results"
-        //             wait_results = readFile '/tmp/wait_results'
+    //             // wait for the django server to be ready for testing
+    //             // the 'waitUntil' block needs to return true to stop waiting
+    //             // in the future this will be handy to specify waiting for a max interval: 
+    //             // https://issues.jenkins-ci.org/browse/JENKINS-29037
+    //             //
+    //             waitUntil {
+    //                 sh "ss -antup | grep 80 | grep LISTEN | wc -l | tr -d '\n' > /tmp/wait_results"
+    //                 wait_results = readFile '/tmp/wait_results'
 
-        //             echo "Wait Results(${wait_results})"
-        //             if ("${wait_results}" == "1")
-        //             {
-        //                 echo "Nginx is listening on port 80"
-        //                 sh "rm -f /tmp/wait_results"
-        //                 return true
-        //             }
-        //             else
-        //             {
-        //                 echo "Nginx is not listening on port 80 yet"
-        //                 return false
-        //             }
-        //         } // end of waitUntil
+    //                 echo "Wait Results(${wait_results})"
+    //                 if ("${wait_results}" == "1")
+    //                 {
+    //                     echo "Nginx is listening on port 80"
+    //                     sh "rm -f /tmp/wait_results"
+    //                     return true
+    //                 }
+    //                 else
+    //                 {
+    //                     echo "Nginx is not listening on port 80 yet"
+    //                     return false
+    //                 }
+    //             } // end of waitUntil
                 
-        //         // At this point Nginx is running
-        //         echo "Docker Container is running"
-        //         input 'You can Check the running Docker Container on docker builder server now! Click process to the next stage!!'    
-        //         // this pipeline is using 3 tests 
-        //         // by setting it to more than 3 you can test the error handling and see the pipeline Stage View error message
-        //         MAX_TESTS = 3
-        //         for (test_num = 0; test_num < MAX_TESTS; test_num++) {     
+    //             // At this point Nginx is running
+    //             echo "Docker Container is running"
+    //             input 'You can Check the running Docker Container on docker builder server now! Click process to the next stage!!'    
+    //             // this pipeline is using 3 tests 
+    //             // by setting it to more than 3 you can test the error handling and see the pipeline Stage View error message
+    //             MAX_TESTS = 3
+    //             for (test_num = 0; test_num < MAX_TESTS; test_num++) {     
                    
-        //             echo "Running Test(${test_num})"
+    //                 echo "Running Test(${test_num})"
                 
-        //             expected_results = 0
-        //             if (test_num == 0 ) 
-        //             {
-        //                 // Test we can download the home page from the running django docker container
-        //                 sh "docker exec -t ${container_name} curl -s http://localhost | grep Welcome | wc -l | tr -d '\n' > /tmp/test_results" 
-        //                 expected_results = 1
-        //             }
-        //             else if (test_num == 1)
-        //             {
-        //                 // Test that port 80 is exposed
-        //                 echo "Exposed Docker Ports:"
-        //                 sh "docker inspect --format '{{ (.NetworkSettings.Ports) }}' ${container_name}"
-        //                 sh "docker inspect --format '{{ (.NetworkSettings.Ports) }}' ${container_name} | grep map | grep '80/tcp:' | wc -l | tr -d '\n' > /tmp/test_results"
-        //                 expected_results = 1
-        //             }
-        //             else if (test_num == 2)
-        //             {
-        //                 // Test there's nothing established on the port since nginx is not running:
-        //                 sh "docker exec -t ${container_name} ss -apn | grep 80 | grep ESTABLISHED | wc -l | tr -d '\n' > /tmp/test_results"
-        //                 expected_results = 0
-        //             }
-        //             else
-        //             {
-        //                 err_msg = "Missing Test(${test_num})"
-        //                 echo "ERROR: ${err_msg}"
-        //                 currentBuild.result = 'FAILURE'
-        //                 error "Failed to finish container testing with Message(${err_msg})"
-        //             }
+    //                 expected_results = 0
+    //                 if (test_num == 0 ) 
+    //                 {
+    //                     // Test we can download the home page from the running django docker container
+    //                     sh "docker exec -t ${container_name} curl -s http://localhost | grep Welcome | wc -l | tr -d '\n' > /tmp/test_results" 
+    //                     expected_results = 1
+    //                 }
+    //                 else if (test_num == 1)
+    //                 {
+    //                     // Test that port 80 is exposed
+    //                     echo "Exposed Docker Ports:"
+    //                     sh "docker inspect --format '{{ (.NetworkSettings.Ports) }}' ${container_name}"
+    //                     sh "docker inspect --format '{{ (.NetworkSettings.Ports) }}' ${container_name} | grep map | grep '80/tcp:' | wc -l | tr -d '\n' > /tmp/test_results"
+    //                     expected_results = 1
+    //                 }
+    //                 else if (test_num == 2)
+    //                 {
+    //                     // Test there's nothing established on the port since nginx is not running:
+    //                     sh "docker exec -t ${container_name} ss -apn | grep 80 | grep ESTABLISHED | wc -l | tr -d '\n' > /tmp/test_results"
+    //                     expected_results = 0
+    //                 }
+    //                 else
+    //                 {
+    //                     err_msg = "Missing Test(${test_num})"
+    //                     echo "ERROR: ${err_msg}"
+    //                     currentBuild.result = 'FAILURE'
+    //                     error "Failed to finish container testing with Message(${err_msg})"
+    //                 }
                     
-        //             // Now validate the results match the expected results
-        //             stage "Test(${test_num}) - Validate Results"
-        //             test_results = readFile '/tmp/test_results'
-        //             echo "Test(${test_num}) Results($test_results) == Expected(${expected_results})"
-        //             sh "if [ \"${test_results}\" != \"${expected_results}\" ]; then echo \" --------------------- Test(${test_num}) Failed--------------------\"; echo \" - Test(${test_num}) Failed\"; echo \" - Test(${test_num}) Failed\";exit 1; else echo \" - Test(${test_num}) Passed\"; exit 0; fi"
-        //             echo "Done Running Test(${test_num})"
+    //                 // Now validate the results match the expected results
+    //                 stage "Test(${test_num}) - Validate Results"
+    //                 test_results = readFile '/tmp/test_results'
+    //                 echo "Test(${test_num}) Results($test_results) == Expected(${expected_results})"
+    //                 sh "if [ \"${test_results}\" != \"${expected_results}\" ]; then echo \" --------------------- Test(${test_num}) Failed--------------------\"; echo \" - Test(${test_num}) Failed\"; echo \" - Test(${test_num}) Failed\";exit 1; else echo \" - Test(${test_num}) Passed\"; exit 0; fi"
+    //                 echo "Done Running Test(${test_num})"
                 
-        //             // cleanup after the test run
-        //             sh "rm -f /tmp/test_results"
-        //             currentBuild.result = 'SUCCESS'
-        //         }
-        //     }
+    //                 // cleanup after the test run
+    //                 sh "rm -f /tmp/test_results"
+    //                 currentBuild.result = 'SUCCESS'
+    //             }
+    //         }
             
-        // } catch (Exception err) {
-        //     err_msg = "Test had Exception(${err})"
-        //     currentBuild.result = 'FAILURE'
-        //     error "FAILED - Stopping build for Error(${err_msg})"
-        // }
+    //     } catch (Exception err) {
+    //         err_msg = "Test had Exception(${err})"
+    //         currentBuild.result = 'FAILURE'
+    //         error "FAILED - Stopping build for Error(${err_msg})"
+    //     }
         
-        stage "Pushing"
-        input 'Do you approve Pushing?'
-        container.push()
+    //     stage "Pushing"
+    //     input 'Do you approve Pushing?'
+    //     container.push()
         
-        currentBuild.result = 'SUCCESS'
+    //     currentBuild.result = 'SUCCESS'
         
-    }
+    // }
     
     stage ('helm test') {
         
